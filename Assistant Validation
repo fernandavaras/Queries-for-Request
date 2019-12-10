@@ -1,0 +1,14 @@
+
+SELECT 
+
+pi.part_number, pi.part_description, lps.price, lps.defective_return_flag, vr.qstr, p.Company_Name,
+
+TRUNC(vr.nearest_return_date) as returnDate
+
+FROM WIZADMIN.PART_INFO pi, WIZADMIN.LINK_PART_SUPPLIER lps, WIZADMIN.VI_DEFECTIVE vr, WIZADMIN.COMPANY_PROFILE p 
+ 
+WHERE pi.part_number = lps.part_number  AND vr.part_ordered = pi.part_number 
+
+AND lps.supplier_id = 1 AND vr.qstr > 0 AND vr.defective_return_flag = 'Y' AND vr.cust_id = 609 AND p.Cust_ID = vr.Cust_ID 
+
+ORDER BY pi.part_number
