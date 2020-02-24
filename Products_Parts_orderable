@@ -1,0 +1,12 @@
+
+
+select distinct i.part_number,part_description,part_intro_date,orderable_flag,defective_return_Flag,commodity_code from 
+wizadmin.product_INFO P , 
+WIZADMIN.LINK_PART_PRODUCT L ,
+WIZADMIN.PART_INFO I, 
+WIZADMIN.LINK_PART_SUPPLIER S 
+where 
+ P.PRODUCt_NUMBER = L.PRODUCT_NUMBER 
+AND S.PART_NUMBER = I.PART_NUMBER 
+AND I.PART_NUMBER = L.PART_NUMBER
+and part_intro_Date>='01-jan-2014'
