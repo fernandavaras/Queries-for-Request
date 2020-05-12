@@ -1,0 +1,81 @@
+
+
+SELECT OH.ORDER_ID,
+          OH.CUST_ID,
+          CP.SUPPLIER_CBN,
+          S.QTY_DECLARED_PACKING,
+          OD.PART_ORDERED,
+          P.PART_DESCRIPTION,
+          OH.RMA_NUMBER,
+          OH.PO_NUMBER,
+          OD.LINE_NUMBER,
+          NVL ( (S.SHIPMENT_NUMBER), 0) AS SHIP_NUM,
+          NVL ( (S.QTY_SHIPPED), 0) AS QS,
+          NVL ( (S.QTY_SHIPPED - S.QTY_DECLARED_PACKING), 0) AS QSTR,
+          NVL ( (S.SHIPMENT_DATE), NULL) AS SHIPMENT_DATE,
+          NVL ( (S.SHIPMENT_DATE + CP.RETURN_PERIOD), NULL)
+             AS DEFECTIVE_EXPIRY_DATE,
+          OH.SUPPLIER_ID
+     FROM WIZADMIN.ORDER_HEADER OH,
+          WIZADMIN.ORDER_DETAIL OD,
+          WIZADMIN.COMPANY_PROFILE CP,
+          WIZADMIN.PART_INFO P,
+          WIZADMIN.SHIPMENT S
+    WHERE     OH.CUST_ID = CP.CUST_ID
+          AND OH.ORDER_ID = OD.ORDER_ID
+          AND S.ORDER_ID = OD.ORDER_ID
+          AND OD.LINE_NUMBER = S.LINE_NUMBER
+          AND P.PART_NUMBER = OD.PART_ORDERED
+          AND OD.STATUS NOT IN
+                 ('ORDDSTAT_DRAFT',
+                  'ORDDSTAT_CANCELLED',
+                  'ORDDSTAT_WARNING',
+                  'ORDDSTAT_IN_PROCESS')
+          AND OD.DEFECTIVE_RETURN_FLAG = 'Y'
+          AND CP.DEFECTIVE_RETURN_FLAG = 'Y'
+          AND S.SHIPMENT_DATE +25 >= TRUNC (SYSDATE) - CP.RETURN_PERIOD 
+          
+          ////// there are 25 days since I want to know the return period expiration 25 days before the first shipment date available closer to expirer
+          for example if the first return period expiration has shipment date in 15 May but I would like to check the status since Apr 20th ////////
+          AND S.QTY_DECLARED_PACKING <= S.QTY_SHIPPED
+          AND CP.SUPPLIER_CBN IN ('CSP000489',
+'CSP000513',
+'CSP000292',
+'CSP000294',
+'CSP000507',
+'CSP000329',
+'CSP_BOULFR',
+'CSP_RE2EGY',
+'CSP_MASEGY',
+'CSP_METREG',
+'CSP000528',
+'CSP000521',
+'CSP_AS1000410',
+'CSP000309',
+'CSP000529',
+'CSP_S2MIFR',
+'CSP000330',
+'CSP_S2MICONFORAMA',
+'CSP000464',
+'CSP_IS2GUA',
+'CSP_METIRQ',
+'CSP000465',
+'CSP_SMSJOR',
+'CSP000517',
+'CSP_ALCSLB',
+'CSP_IDOLEB',
+'CSP_IS2MAR',
+'CSP_MC3LR1',
+'CSP_IS2CAL',
+'CSP_REDOM',
+'CSP_ENSNAM',
+'CSP000506',
+'CSP000514',
+'CSP000476',
+'CSP_REDBAH',
+'CSP_SMARTN',
+'CSP_ENSUGA',
+'CSP_IDOMAU',
+'CSP_JARQAT',
+'CSP000475');
+ 
