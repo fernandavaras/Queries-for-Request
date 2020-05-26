@@ -1,0 +1,39 @@
+
+
+select      cp.supplier_cbn,
+      od.part_ordered,
+      sh.part_shipped,
+      od.defective_return_flag,
+      oh.rma_number,
+      oh.po_number,
+      sh.shipment_number,
+      sh.shipment_date,
+      (case when od.defective_return_flag = 'Y' then cp.return_period+shipment_date else NULL end) as "RETURN_WINDOW_EXPIRY_DATE", 
+      (case when od.defective_return_flag = 'N' then SH.SHIPMENT_DATE + cp.PRE_PARAM_Y else NULL end) as "EXPIRY_OF_CLAIM_WINDOW", 
+      sh.line_number,
+      sh.qty_shipped,
+      od.status,
+      sh.PROCESSING_DATE,
+      s.supplier_name,
+      hsm.hub_name
+      from 
+      order_header oh,
+      order_detail od,
+      shipment sh,
+      company_profile cp,
+      supplier s,
+      hub_supplier_matrix hsm
+      where
+      cp.cust_id=oh.cust_id
+      and cp.type in ( 'COMP_RL','COMP_ASP')
+      and oh.cust_id = 752
+      and oh.order_id=od.order_id
+      and od.order_id=sh.order_id
+      and od.line_number=sh.line_number
+      and sh.PROCESSING_DATE like '%04/02/2020%'
+      and oh.supplier_id = s.SUPPLIER_ID
+      and sh.hub_id = hsm.hub_id (+)
+      order by
+      od.order_id,
+      od.line_number,
+      sh.shipment_number
