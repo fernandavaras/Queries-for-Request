@@ -1,0 +1,9 @@
+
+
+select * from VI_PREINVOICE_REPORT_CSP where month='202005' and supplier_cbn='MSCPAV'
+
+
+
+////////////***********************//////////////////////////////
+
+VI_PREINVOICE_REPORT_CSP  table contains all the details for extract 
