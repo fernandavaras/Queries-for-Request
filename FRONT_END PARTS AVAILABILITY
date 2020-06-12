@@ -1,0 +1,17 @@
+
+
+SELECT lpp.product_number as product_number, pri.product_description as product_description, pri.product_family as product_family, 
+pri.product_brand as product_brand, pri.product_cycle as product_cycle, pri.product_platform as product_platform, 
+ci.commodity_description as commodity_name, ci.commodity_code as commodity_code, lpp.part_number as part_number, 
+pi.part_description as part_description, pi.photo_flag as photo_flag, pi.photo_name as photo_name, lps.price as part_price,  
+lps.stock_quantity as stock_quantity,  lps.stock_due_date as stock_due_date,  su.dispatch_flag as dispatch_flag,  
+su.dispatch_code as dispatch_code,  s.supplier_id as supplier_id,  s.supplier_name as supplier_name,  
+lps.defective_return_flag as part_defective  FROM link_part_product lpp, product_info pri, commodity_info ci, part_info pi, 
+link_part_supplier lps, dispatch_flag su , supplier s WHERE lpp.product_number = pri.product_number  AND   
+lpp.part_number = lps.part_number  AND   lpp.part_number = pi.part_number  AND   su.dispatch_flag = lps.dispatch_flag  
+AND   s.supplier_id = lps.supplier_id  AND   su.supplier_id = lps.supplier_id  AND   
+pi.commodity_code = ci.commodity_code and pri.product_family=ci.product_family  AND   
+lps.orderable_flag = 'Y'  AND s.supplier_id in (select supplier_id from supplier) AND   
+lpp.part_number LIKE '%4CF02AA#ABD%'  AND   pi.part_number <> 'SP' ORDER BY lpp.product_number, ci.commodity_description, 
+lpp.part_number
+
